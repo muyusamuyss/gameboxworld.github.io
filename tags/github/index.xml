@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>github on 秋码分享</title><link>https://qiucode.cn/tags/github/</link><description>Recent content in github on 秋码分享</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Mon, 12 Aug 2024 20:46:43 +0800</lastBuildDate><atom:link href="https://qiucode.cn/tags/github/index.xml" rel="self" type="application/rss+xml"/><item><title>个人站点迁移之gitlab.com pages 绑定自定义域名</title><link>https://qiucode.cn/article/208/</link><pubDate>Mon, 12 Aug 2024 20:46:43 +0800</pubDate><guid>https://qiucode.cn/article/208/</guid><description>前言概要 能浏览本文的你，想必是在gitlab.com上创建了Repository（仓库），并将本地代码push（推送）到该Repository（仓库）中了，开启了Pages服务，然而，gitlab.com并不会像github.com那样，给你生成以username.gitlab.io这样的子域名（二级域名/subdomain），而是生成了以你的的Repository（仓库）名称（比如我创建的Repository名称是qiucode.gitlab.io）加上-你的username，再加上一串由字母、数字组成的字符串，像是UUID一般的字符串，最后则拼接上gitlab.io,最后便如我的这般：https://qiucode-gitlab-io-qiucode-aee06712da2e10b24ab5079f6b5a4a09c943b.gitlab.io/
+这也就是我在上一篇 不要你掏腰包，就能搭建个人网站之 gitlab.com Pages 托管服务 所遗留的问题，之所以会产生那么一长串的domain（子域名），那是由于gitlab.com给你生成URL时，默认是开启了unique domain（唯一域），这也是我查看了官方文档方才知道的，其实，稍微注意一下，在Pages当前页滚动页面，就会看到那个unique domain（唯一域）的开关了。
+既然知道了gitlab.com默认开启了unique domain（唯一域），那么，我们只要把它关闭了，不就可以了嘛！是的，那么在当前Repository（仓库）左侧选项中找到Deploy（部署）中的子选项Pages，会看到下方settings属性，有个checkbox（复选框），它就是是否Use unique domain（使用唯一域）的开关，我们只需点击它，checkbox也就处于未选中（Uncheck）状态，点击底下的save changes（保存更改）就可以了。
+配置自定义域名 如果你不想花钱去购买域名，而使用username.gitlab.iol来作为你的站点的域名，是可以的，没有任何毛病，毕竟很多博主、站长也都是这么干的。既省去了购买域名的费用（当然也有免费的二级域名，但那还不如使用username.gitlab.io呢！），又省去了SSL的困惑。这才是真正意义上的不要你掏腰包，就能搭建一个个人网站的最终完结篇。
+可有些博主、站长（比如： qiucode.cn）还是希望能自定义域名。
+要想自定义域名，还是在当前Repository中找到Deploy，选择它的子选项Pages
+滚动页面找到Domain属性，点击右侧的New domain（新域名/添加新的域名）
+当你添加完了域名后，来到了Pages Domain新页面，它便是要求你在你的域名 DNS 添加下列Record（记录），以此来验证你添加的域名所有权。
+可以看出，我们需要在域名 DNS添加两条记录，然而，第一条记录中ALIAS（别名），却没在我的域名 DNS选项里，你说这，是不是在为难我啊！
+这么着吧，还是看官方文档，看看该如何配置自定义域名。
+官方文档关于如何配置自定义域名：https://docs.gitlab.com/ee/user/project/pages/custom_domains_ssl_tls_certification/index.html 。
+按官方文档来看，分为三种情况：
+root domain（根域名/主域名，如： qiucode.cn）
+DNS添加一条A记录并指向gitlab.com Pages服务器IP地址（gitlab.com上的IP是35.185.44.232）。 再添加一条TXT记录用来验证你的域名所有权。 主机记录 记录类型 记录值 @ A 35.185.44.232 _gitlab-pages-verification-code.qiucode.cn TXT gitlab-pages-verification-code=00112233445566778899aabbccddeeff subdomain（子域名：如：lab.qiucode.cn）
+DNS添加一条ALIAS 或 CNAME 记录，并指向Pages服务器 再添加一条TXT记录用来验证你的域名所有权。 主机记录 记录类型 记录值 lab.qiucode.cn ALIAS/CNAME qiucode.gitlab.io _gitlab-pages-verification-code.lab.qiucode.cn TXT gitlab-pages-verification-code=00112233445566778899aabbccddeeff 可按照官方文档来配置自定义域名，那个Verification status（验证状态）却一直都是Unverified，当然你在域名DNS添加纪录之后，得点击旁边的刷新按钮，其实它是将整个页面进行刷新，而不是页面局部更新数据。以至于修改DNS主机记录：
+主机记录 记录类型 记录值 lab.qiucode.cn ALIAS / CNAME qiucode.</description></item><item><title>不要你掏腰包，就能搭建个人网站之 gitlab.com Pages 托管服务</title><link>https://qiucode.cn/article/207/</link><pubDate>Sun, 11 Aug 2024 16:46:43 +0800</pubDate><guid>https://qiucode.cn/article/207/</guid><description>当你看到文章标题时，不会还以为我实在忽悠人吧！也难怪，这是我们身处的环境所造就的，这一点我倒是可以理解，毕竟，我们身边总是充斥着以免费、不要你一分钱……为噱头的各种声音，贪小便宜是人的天性，殊不知，他们因贪这小小地便宜，反倒是损失了更多。
+人们在上当受骗了首次，也就对身边的“免费”东西不再感冒了。只有那么少部分人知晓这世上是不会有免费的午餐、天上也不会无缘无故的掉馅饼，倘若真掉馅饼了，并且还砸中了你，那是行骗之人瞄准了你的口袋而不去理会这些所谓的“免费”。
+要是在互联网早期，你说，“不用你掏腰包，就可以搭建一个专属的个人网站。”那么，在别人眼中，此时的你就是个骗子。
+而到了云计算兴起后，你再说同样的话，这时便有少部分人相信了。
+可以参考：其实，低成本甚至免费的，也是可以搭建个人网站的哦！
+为何选择 gitlab.com pages 服务呢？ 但凡是代码托管平台，它都提供pages服务，如果没有，那它就是阉割版的代码托管平台。
+享誉海内外知名的github.com、提供开源版和在线的gitlab.com、……等众多海外声名显赫的代码托管平台，都提供了pages 服务。
+当然咯，国内也是有很多代码托管平台，诸如：gitee.com pages 已经光荣下线了，请不要试图在上面托管任何静态网站了！！！、coding.net pages 服务会在页面停留 5s（5秒），像是在检测你的静态站点、以及一些不知名小众的托管平台，也都提供了pages 服务，但是，这些国内托管平台对于个人想要开启pages是有要求（条件）的。
+若不是github.com在国内的访问速度限制，以及时常出现该网站无法访问的种种原因，想必国内的coder（码农或程序员）是不会将站点托管在国内的coding.net等其他不知名小众托管平台上的，gitee.com就别提了，现在可以把gitee.com称为阉割版的托管平台了，因为它不再提供pages了。
+你以为将站点托管在coding.net,你就会觉得在国内访问速度提升了嘛？你是否觉得它会比github.com托管站点访问来的快？若你是这么觉得，那你认为错了，正所谓：你以为的以为不是你的以为。coding.net pages 服务会在你托管在其上的站点提留5秒钟，这反倒没有github.com快了。
+国内的gitee.com骤然下线了pages服务，使得众多托管在gitee.com上的众多站长纷纷迁往它处（github.com、gitlab.com等海外托管平台），而托管在国内的coding.net上，迟早也是会忍受不了那莫名其妙的5秒钟页面空白提留检测，改用其他托管平台的。
+或许有人跳起脚来，指着我的鼻子，骂道，“你为何老是贬低国内互联网产品呢？而一味地夸耀海外的互联网产品呢？照这样下去，国内的互联网行业还这么能兴起呢？”
+“在你说这些话之前，烦请你在电子设备中使用浏览器访问国内的gitee.com,看看它的pages服务是不是下线了，以及coding.net是不是有在页面提留5秒中，还有些国内小众托管平台，如CSDN也有托管平台，它也提供了pages，对于个人来讲，是有条件限制的。”
+对于国内的这些托管平台，gitee.com可谓是坐上了国内托管平台的“第一把交椅”，然而，它却没有任何形式的通知托管在其上的众多站长，以至于很多站长都蒙在鼓里，也只有在更新文章，推送到gitee.com上，方才知晓，自己托管在gitee.com上的站点出现了Timeout；coding.net给每个托管在它上面的站点停留 5 秒钟的时间，以此来检查你的站点；国内数一数二的托管平台都有这样或那样的限制，或者干脆下线了，那么，国内那些小众的、初出茅庐的托管平台岂不是对个人想要在该平台开启pages有了更多严苛`的条件了。
+gittlab.com 创建 Repository（仓库） 在创建Repository之前，你得为你的gitlab.com配置好SSH Key，以便Repository的pull（拉取）和push（推送），至于该如何配置，可参考：国内 gitee.com Pages 下线了，致使众多站长纷纷改用其他托管平台 或在 CSDN上的 国内 gitee.com Pages 下线了，致使众多站长纷纷改用 github、gitlab Pages 托管平台 。
+登陆gitlab.com官网，在左上角，点击账户头像旁边+按钮，进行创建一个新的project或repository。
+随后，我们便在右侧看到，可以创建project或repository的各种“款式”。
+我这里选择Create blank project（创建一个空白/白板项目）。
+这里的项目名称取为username.gitlab.io是方便公网访问的。
+假设project name为blog，那么你的project URL为：https://gitlab.com/username/blog/ 。一旦这个project启用了GitLab pages，并构建了站点，站点访问url为：https://uesrname.gitlab.io/blog/ 。如果你要创建一个user page，假设此时project name为qiucode.gitlab.io(qiucode为你的Gitlab username)，则你的project URL为：https://gitlab.com/qiucode/qiucode.gitlab.io 。一旦这个project启用了GitLab pages，并构建了站点，站点访问url为：https://qiucode.gitlab.io。
+本文章著作权归作者所有，任何形式的转载都请注明出处。
+使用以下命令将创建好的project克隆到本地。
+git clone git@gitlab.</description></item><item><title> 国内 gitee.com Pages 下线了，致使众多站长纷纷改用其他托管平台</title><link>https://qiucode.cn/article/206/</link><pubDate>Sat, 10 Aug 2024 18:46:43 +0800</pubDate><guid>https://qiucode.cn/article/206/</guid><description>作为一位IT或coder（码农、程序员），在日常工作中，多多少少都会有技术知识的积累（生产环境中所遇到的问题【亦可称为是坑】）。俗话说得好，好记性抵不过烂笔头。不管是前沿技术的研习后的心得，还是工作中所遇到的问题，亟需将这些笔记留存下来，为的是以备后续查看（未来有可能遇到类似的坑，也好该如何下手，以不至于手忙脚乱的），当然咯，在方便自己的同时，也分享给他人。
+那既然只是为了留存笔记而已，又何必去搭建一个个人博客网站呢？国内在线攥写博客的平台多如牛毛，既“省时”又“省力”，又何必非要去为难自己来搭建一个专属于自己的个人博客网站呢？诸如CSDN、知乎、博客园、掘金、简书……，攥写文章都是免费的（如果这都不免费，那恐怕这些平台都要下线了），又何必花钱购买云服务器/VPS、域名，网站你可以自己编写（省去了这部分成本），或是可以使用github pages、gitee.com pages来免费托管静态网站，但至少比在大平台攥写文章时，多了一步，那是将写好的文章push（推送）到你的远程仓库，那不成大平台免费的，它不香么？
+回答上述“三个何必” 既然只是工作中的知识笔记，或是前沿技术的研习心得，国内有大把的博客、社区以供攥写，而缘何非得去搭建一个个人博客呢？的确，第三方平台有诸多的优点，但它的弊端也是显而易见的，就拿我2022-12-08在CSDN攥写的一篇关于如何注册 ChatGPT的文章，过了几个月后，居然被CSDN批注为未通过审核。
+当我看到CSDN发来的站内通知，顿时懵圈了，不禁发问，“这是怎么回事？CSDN居然还有这波操作，着实令人费解啊！”
+这就是你在第三方平台上攥写文章的困境，当然咯，你写的文章符合该平台的规则，那么一切将是风平浪静，反之，平台随时可以以审核未通过之借口，使得你热心分享知识给他人，却无形之中让人泼了一脚盆洗脚水，从头凉到脚。故而，搭建一个个人博客势在必行，而大三方平台照样会更新文章，而它只是作为更好地分享知识给他人，诸如 花了不到1块5，玩了下全网最火的ChatGPT 。
+有人说，“你平常就写写知识笔记、以及你工作所遇到的问题解决方案，你就非得去花钱折腾出一个个人网站出来吗？难不成现成的大平台它不香吗？”
+“大平台它香，但也让瞬间挠着头发，在房间里踱来踱去。而现如今搭建一个人网站也可以是低成本，甚至免费。”可以参考： 其实，低成本甚至免费的，也是可以搭建个人网站的哦！ 。
+github、gitlab、gitee（已经下线了）、coding.net（要结合腾讯云）等国内外知名代码托管平台，都有提供Pages服务，也就是可以托管你的静态资源，以此来搭建一个静态网站，然而，每次在本地编译生成好的静态资源 推送（push）到这些托管平台总是比较麻烦的，毕竟，这相较于在第三方平台上攥写文章，费力了很多。
+对于每次更新文章，都要在本地编译生成静态资源，总让觉得很是枯燥。去这些托管平台看看有没有属于这套程序的CI/CD（持续集成）相关文档。
+gitee.io（gitee pages）终究还是下线了 据将站点托管在gitee pages的站长称，2024-05-01假期回岗，却发现自己的站点出现了Timeout，一时间，他很是不解，不应该啊！只是托管个静态资源，既然也出现了Timeout。
+随即，他去gitee.com咨询官方客服，到底是出现了什么问题？回复他的是，gitee pages光荣下线了。（这是我预料之中的，我也并不是看不好国内这些互联网平台）
+当然咯，有些站长还是不死心，竟然跑到gitee官方账号下提issue，很显然，这个issue官方是不会回复的，犹如一封信，内容写好了，却在最后忘记把寄往何处的地址写上，最终信是无法到达彼处的，可谓是遥遥无期。
+当初，那些站长之所以会选择gitee pages来建站，也是有原因的，毕竟github pages在国内访问速度，，真是一言难尽啊，如果光是访问速度慢些，到还是勉强接受，不幸的是，github pages时常在国内出现了无法访问该网站的情形，这还让你的站点怎么分享知识给他人呢？
+介于github pages在国内访问速度慢，还时常无法打开的缘故，很多站长终究还是勉为其难地选择了国内的托管平台（诸如：gitee.com pages、coding.net pages）。
+gitlab.com pages托管站点 不同于github pages，gitlab pages是通过CI/CD来实现pages，也就是他没有像github那样的纯静态托管机制。当然咯，github也是可以通过CI/CD来实现站点的托管的。
+要想在gitlab.com pages上托管站点，那么，毫无疑问的是，你得登陆 gitlab.com或注册一个新的gitlab.com账号（可以直接使用你的github账号），这里就不赘述gitlab.com账号的注册了。
+在登陆gitlab.聪明·后，我们着手创建一个仓库（Repository`）,名称随你意，只要你欢喜。
+通常，我们都是使用SSH来远程操作的，那么，就需要配置gitlab的SSH Key，关于key的配置，之前，我也是有相应的文章来介绍配置github和gitee的SSH Key，如果不是很清楚的话，在这里，我将再次讲解如何配置gitlab SSH Key。
+我们本地使用以下命令来生成SSH公私钥.
+ssh-keygen -t rsa -f ~/.ssh/gitlab.com/id_rsa -c &amp;#34;邮箱地址&amp;#34; # -f SSH私钥文件地址 随后，我们将生成好的公钥复制到gitlab.com上，可以使用以下命令。
+cat 以 .pub 后缀的文件 当你git clone时，却出错了。
+然而，你以为这样就好了嘛，可gitlab却还不行，还需再生成SSH 公私钥的文件位置下，编辑config文件，加入以下内容。
+# GitLab.com Host gitlab.</description></item><item><title>解决 github.com port 443: Timed out 的问题</title><link>https://qiucode.cn/article/191/</link><pubDate>Sat, 27 Jan 2024 19:39:19 +0800</pubDate><guid>https://qiucode.cn/article/191/</guid><description>国内访问github.com总是那么不竟如人意，时而无法加载网页，时而等我们抽完了一根烟后，它还处于转圈的状态。
+虽然国内有gitee.com等诸多的代码托管平台，但却鲜有国人愿意去呢？其中的缘由，想必也不用我多说，大伙也都心知肚明了吧！
+即便github.com在国内访问慢，或是加载不出来，我们也宁愿等它慢慢地加载出来，却不愿将代码托管于境内的平台。
+github.com 托管了 qiucode.cn 站点 由于将 秋码记录 托管于 github.com上后，写些文章就得push上去，然而当我push上去时，却十有八九都会出现 github.com port 443: Timed out的错误，代码显然是无法push上去的了！
+难道在国内，现在push或是pull github.com，都是要靠运气吗？偶尔可以，大多数都是报错。
+可是，“运气”总不能实时来关顾我们，要是那样的话，我早去买彩票了，虽然有运气，买了彩票，它也不一定中奖，毕竟古话早就有言：朝里有人好当官。
+然而，有没有一劳永逸的解决之道呢？答案那是肯定有的，要不然，也就不会有这么一篇文章了，您也就不会花费您宝贵的时间来浏览本文，寻求与我遇到同样问题的解决方案了。
+当我们想要clone github.com上的一个项目时，出现以下错误，那都是家常便饭了。
+从报错信息来看，很显然这是https请求超时，这是毋庸置疑的，毕竟我们访问github.com都是是好是坏的！您在terminal端不还是一样的请求超时嘛！
+解决国内 push/pull github.com 项目出现 Timed out 的问题 毕竟，秋码记录 是托管于 github.com上，总不可能写了一篇文章，想要push到 github.com，这次出现Timed out的错误，就不push，而是等到下次再写文章时，再push，这显然不是我要的，毕竟，技术文章（在这里，我也就王婆卖瓜，自卖自夸咯）是有时效性的！说是这么说，但并不妨碍的。
+能出现Timed out的问题，我们第一想到便是网络问题（有些事我们自己心里清楚就好了），其次才是本地git配置问题。
+那么，我们暂且略过网络问题这一客观事实不谈，来说说本地git的配置是哪里出现问题，而导致了出现Timed out的问题呢？
+我们还是回到 terminal，输入以下命令测试ssh是否成功？
+ssh -T git@github.com 如果，您也出现了上图的结果，那显然是配置的问题了。
+我们再次测试下port 443是否也出现超时的问题？
+ssh -T -p 443 git@ssh.github.com 可以看出，端口 443 请求是没问题，那么，为什么clone项目时，却报出了port 443请求超时的错误呢？
+我们大致从上面的ssh测试报错便可以得出结论了，那便是ssh连接超时了。
+而要想解决ssh请求超时的问题，那就要从配置着手了，还是一样的在terminal输入以下命令。
+vim ~/.ssh/config 而后在进入编辑状态，填写以下内容
+# Add section below to it
+Host github.com
+Hostname ssh.</description></item><item><title>Git版本控制入门教程（一）</title><link>https://qiucode.cn/article/106/</link><pubDate>Sat, 10 Jul 2021 06:52:05 +0000</pubDate><guid>https://qiucode.cn/article/106/</guid><description>&lt;p>重新整理关于git版本控制的操作教程，相信你在看了这篇文章，你会更加清晰的认识git，和熟练的使用git&lt;/p></description></item></channel></rss>
